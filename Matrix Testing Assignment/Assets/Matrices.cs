@@ -153,8 +153,6 @@ public class Matrices : MonoBehaviour {
 
 
         /*Projection Matrix*/
-       
-
      Matrix4x4 projectionMatrix = Matrix4x4.Perspective(45, (Screen.width / Screen.height), 1, 1000);
         print("Projection Matrix: " + projectionMatrix.ToString());
 
@@ -189,6 +187,48 @@ public class Matrices : MonoBehaviour {
             everyImage += "Image after Single Matrix of Everything: " + imageEverything[i].ToString() + "\n";
         }
         print(everyImage);
+
+        /*Projection by hand*/
+       /* Matrix4x4 handProjection = new Matrix4x4(new Vector4(1,0,0,0),
+                                                 new Vector4(0,1,0,0),
+                                                 new Vector4(0, 0, 1, 0),
+                                                 new Vector4(0, 0, -1, 0));
+
+        print("Projection by Hand: " + handProjection.ToString());*/
+
+
+
+        /*Image after Projection by Hand*/
+        /*Vector3[] imageProjectionHand = MatrixTransform(imageAfterVM, handProjection);
+
+        string projectionHandImage = "";
+
+        for (int i = 0; i < imageProjectionHand.Length; i++)
+        {
+            projectionHandImage += "Image after Projection by Hand: " + imageProjectionHand[i].ToString() + "\n";
+        }
+        print(projectionHandImage);*/
+
+        /*Projection by hand*/
+        /*Matrix4x4 handProjectionV2 = new Matrix4x4(new Vector4(1, 0, 0, 0),
+                                                 new Vector4(0, 1, 0, 0),
+                                                 new Vector4(0, 0, 1, -1),
+                                                 new Vector4(0, 0, 0, 0));
+
+        print("Projection by Hand V2: " + handProjectionV2.ToString());*/
+
+
+
+        /*Image after Projection by Hand*/
+        /*Vector3[] imageProjectionHandV2 = MatrixTransform(imageAfterVM, handProjectionV2);
+
+        string projectionHandImageV2 = "";
+
+        for (int i = 0; i < imageProjectionHandV2.Length; i++)
+        {
+            projectionHandImageV2 += "Image after Projection by Hand: " + imageProjectionHandV2[i].ToString() + "\n";
+        }
+        print(projectionHandImageV2);*/
 
     }
 
