@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class Outcode : MonoBehaviour {
 
-    bool up;
-    bool down;
-    bool left;
-    bool right;
+   public bool up;
+   public bool down;
+   public bool left;
+   public bool right;
 
-    public Outcode()
+    public Outcode() //Return 0000
     {
         up = false;
         down = false;
@@ -37,7 +37,7 @@ public class Outcode : MonoBehaviour {
 
     public string toString()
     {
-       byte upValue = Convert.ToByte(up);
+        byte upValue = Convert.ToByte(up);
         byte downValue = Convert.ToByte(down);
         byte lValue = Convert.ToByte(left);
         byte rValue = Convert.ToByte(right);
@@ -48,6 +48,7 @@ public class Outcode : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+
 		
 	}
 	
@@ -126,12 +127,12 @@ public class Outcode : MonoBehaviour {
 
     }
 
-    public static Outcode andOp(Outcode x, Outcode y)
+    public static Outcode operator &(Outcode x, Outcode y)
     {
         Outcode outcode = new Outcode();
 
         outcode.up = (x.up && y.up);
-            outcode.down = (x.down && y.down);
+        outcode.down = (x.down && y.down);
         outcode.left = (x.left && y.left);
         outcode.right = (x.right && y.right);
 
@@ -139,44 +140,30 @@ public class Outcode : MonoBehaviour {
 
     }
 
-    public static bool opEqual(Outcode x, Outcode y)
+    public static bool operator == (Outcode x, Outcode y)
     {
         return (x.up == y.up) && (x.down == y.down) && (x.left == y.left) && (x.right == y.right);
     }
 
-    public static bool notEqual(Outcode x, Outcode y)
+    public static bool operator != (Outcode x, Outcode y)
     {
         return !(x == y);
     }
 
+
     bool trivialAccept(Outcode x, Outcode y)
     {
         Outcode z = new Outcode();
-
+        print("Trivially Accept");
         return ((x == y) && (y == z));
     }
 
     bool trivialReject(Outcode x, Outcode y)
     {
         Outcode z = new Outcode();
-
+        print("Trivially Reject");
         return((x & y) == z);
     }
-
-     void lineClip(Vector3 v1, Vector3 v2)
-    {
-        Outcode x = new Outcode(v1);
-        Outcode y = new Outcode(v2);
-
-
-
-
-    }
-
-
-
-
-
-
+    
 
 }

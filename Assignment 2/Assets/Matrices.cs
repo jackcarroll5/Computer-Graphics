@@ -191,18 +191,68 @@ public class Matrices : MonoBehaviour {
 
 
 
+        OutCodeTest testRasterisation = new OutCodeTest();
+        //List<Vector2> listRaster = testRasterisation.rasteriseBreshenhams(imageEverything[0], imageEverything[1]);
+        Vector2 start = new Vector2(3, 2);
+        Vector2 end = new Vector2(10, 7);
+        print("Start Pt " + start + "\nEnd Pt " + end);
 
-        Outcode test = new Outcode();
-        print(test.ToString());
-
-
-
-
-        Outcode test2 = new Outcode(true,false,false,false)
-        print(test2.ToString());
+        List<Vector2> listRaster = testRasterisation.rasteriseBreshenhams(start, end);
 
 
-        Outcode test3 = new Outcode();
+        foreach (Vector2 pt in listRaster)
+        {
+            print(pt.x + "," + pt.y);
+        }
+
+        start = new Vector2(3, 7);
+        end = new Vector2(15, 30);
+        print("Start Pt " + start + "\nEnd Pt " + end);
+
+        listRaster = testRasterisation.rasteriseBreshenhams(start, end);
+
+        foreach (Vector2 pt in listRaster)
+        {
+            print(pt.x + "," + pt.y);
+        }
+
+
+        start = new Vector2(6, 24);
+        end =  new Vector2(17, 15);
+        print("Start Pt " + start + "\nEnd Pt " + end);
+
+        listRaster = testRasterisation.rasteriseBreshenhams(start, end);
+
+        foreach (Vector2 pt in listRaster)
+        {
+            print(pt.x + "," + pt.y);
+        }
+
+
+        start = new Vector2(3, 6);
+        end = new Vector2(3, 12);
+        print("Start Pt " + start + "\nEnd Pt " + end);
+
+        listRaster = testRasterisation.rasteriseBreshenhams(start, end);
+
+        foreach (Vector2 pt in listRaster)
+        {
+            print(pt.x + "," + pt.y);
+        }
+
+        start = new Vector2(31, 51);
+        end = new Vector2(43, 23);
+        print("Start Pt " + start + "\nEnd Pt " + end);
+
+        listRaster = testRasterisation.rasteriseBreshenhams(start, end);
+
+        foreach (Vector2 pt in listRaster)
+        {
+            print(pt.x + "," + pt.y);
+        }
+
+
+
 
 
 
