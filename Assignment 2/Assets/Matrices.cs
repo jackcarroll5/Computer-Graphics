@@ -14,6 +14,7 @@ public class Matrices : MonoBehaviour {
    private int textureHeight = 512;
     private int trackingTime = 0;
     private int angle = 5;
+   
     //OutCodeTest test = new OutCodeTest();
 
 
@@ -102,7 +103,7 @@ public class Matrices : MonoBehaviour {
 
 
 
-        string screenRotArray = "";
+       // string screenRotArray = "";
 
         /*for (int i = 0; i < screenImage.Length; i++)
         {
@@ -118,7 +119,8 @@ public class Matrices : MonoBehaviour {
             print(pt.x + "," + pt.y);
         }
 
-        //drawCube(imageAfterRotation);
+        drawCube(imageAfterRotation);
+        cubeTexture.Apply();
 
 
         Matrix4x4 scalingMatrix =
@@ -145,7 +147,7 @@ public class Matrices : MonoBehaviour {
 
        
 
-        string screenScaleArray = "";
+        //string screenScaleArray = "";
 
         /*for (int i = 0; i < screenImageScale.Length; i++)
         {
@@ -161,9 +163,8 @@ public class Matrices : MonoBehaviour {
             print(pt.x + "," + pt.y);
         }
 
+        drawCube(imageAfterScaling);
         cubeTexture.Apply();
-
-        //drawCube(imageAfterScaling);
 
 
         Matrix4x4 translationMatrix =
@@ -181,16 +182,6 @@ public class Matrices : MonoBehaviour {
 
         drawCube(imageAfterTranslating);
         cubeTexture.Apply();
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -215,10 +206,7 @@ public class Matrices : MonoBehaviour {
         cubeTexture.Apply();
 
 
-        //drawCube(imageAfterTranslating);
-
-
-        string screenTranslateArray = "";
+        //string screenTranslateArray = "";
 
       /*  for (int i = 0; i < screenImageTranslate.Length; i++)
         {
@@ -252,7 +240,7 @@ public class Matrices : MonoBehaviour {
 
 
 
-        string screenTransformArray = "";
+        //string screenTransformArray = "";
 
         /*for (int i = 0; i < screenImageTranform.Length; i++)
         {
@@ -309,7 +297,7 @@ public class Matrices : MonoBehaviour {
 
 
 
-        string screenVMArray = "";
+        //string screenVMArray = "";
 
         /*for (int i = 0; i < screenImageVM.Length; i++)
         {
@@ -319,13 +307,6 @@ public class Matrices : MonoBehaviour {
 
 
         //drawCube(imageAfterVM);
-
-
-
-
-
-
-
 
 
 
@@ -353,7 +334,7 @@ public class Matrices : MonoBehaviour {
 
 
 
-        string screenProjectArray = "";
+        //string screenProjectArray = "";
 
        /* for (int i = 0; i < screenImageProjection.Length; i++)
         {
@@ -393,7 +374,7 @@ public class Matrices : MonoBehaviour {
 
 
 
-        string screenFinalArray = "";
+        //string screenFinalArray = "";
 
         /*for (int i = 0; i < screenImageFinal.Length; i++)
         {
@@ -409,17 +390,11 @@ public class Matrices : MonoBehaviour {
 
 
 
-
-
-
-
-
-
-
-
-
         OutCodeTest testRasterisation = new OutCodeTest();
         //List<Vector2> listRaster = testRasterisation.rasteriseBreshenhams(imageEverything[0], imageEverything[1]);
+
+
+
 
         //Normal
         Vector2 start = new Vector2(3, 2);
@@ -436,6 +411,9 @@ public class Matrices : MonoBehaviour {
         }
 
        cubeTexture.Apply();
+
+
+
 
 
 
@@ -571,10 +549,12 @@ public class Matrices : MonoBehaviour {
 
     }
 
+
+    //Drawing the lines of the cube within the cube model using texture pixels
     public void drawCube(Vector3[] cubeImage)
     {
         lineDraw(cubeImage[0], cubeImage[1]);
-        lineDraw(cubeImage[1], cubeImage[2]);
+       lineDraw(cubeImage[1], cubeImage[2]);
         lineDraw(cubeImage[2], cubeImage[3]);
         lineDraw(cubeImage[3], cubeImage[0]);
 
@@ -585,19 +565,15 @@ public class Matrices : MonoBehaviour {
 
        
         lineDraw(cubeImage[0], cubeImage[4]);
-        lineDraw(cubeImage[7], cubeImage[3]);
-        lineDraw(cubeImage[0], cubeImage[4]);
-        lineDraw(cubeImage[7], cubeImage[3]);
-
-        lineDraw(cubeImage[7], cubeImage[3]);
+        lineDraw(cubeImage[1], cubeImage[5]);
         lineDraw(cubeImage[2], cubeImage[6]);
-        lineDraw(cubeImage[0], cubeImage[4]);
-        lineDraw(cubeImage[7], cubeImage[3]);
+        lineDraw(cubeImage[3], cubeImage[7]);
+
 
     }
 
 
-
+    //Method for drawing line based on line clipping and applying Breshenhams to it with start and end line
     private void lineDraw(Vector3 start, Vector3 end)
     {
         Vector2 startLine = new Vector2(start.x / start.z, start.y / start.z);
@@ -614,14 +590,9 @@ public class Matrices : MonoBehaviour {
             //convertToScreen(startLine, endLine, textureWidth, textureHeight);
 
 
-
-
-
             OutCodeTest testRasterisation = new OutCodeTest();
 
            // Vector2 startConvert = convertToScreen(startLine,textureWidth,textureHeight);
-
-
 
             List<Vector2> listRaster = testRasterisation.rasteriseBreshenhams(startLine, endLine);
 
@@ -730,12 +701,6 @@ public class Matrices : MonoBehaviour {
         }
     }
 
-    private Vector2[] cubeDivision(Vector3[] cubedIn)
-    {
-
-        throw new NotImplementedException();
-    }
-
     int resolutionX(float x, int xResolution)
     {
         return (int)((x + 1) * (xResolution - 1) / 2.0f);
@@ -779,8 +744,7 @@ public class Matrices : MonoBehaviour {
             Matrix4x4.TRS(new Vector3(0, 0, 0), //Translation Vector
                            rotation,
                             Vector3.one);
-        print("Rotation Matrix: " + rotationMatrix.ToString());
-        // printMatrix(rotationMatrix);
+        
 
 
         Vector3[] imageAfterRotation =
@@ -789,7 +753,54 @@ public class Matrices : MonoBehaviour {
         return imageAfterRotation;
     }
 
-  private Vector3 dirMoving()
+    private Vector3[] scalingCube(Vector3[] cube)
+    {
+        Vector3 startingAxis = new Vector3(14, 3, 3);
+        startingAxis.Normalize();
+        Quaternion rotation = Quaternion.AngleAxis(-27, startingAxis);
+
+        Matrix4x4 rotationMatrix =
+            Matrix4x4.TRS(new Vector3(0, 0, 0), //Translation Vector
+                           rotation,
+                            Vector3.one);
+
+
+        Vector3[] imageAfterRotation =
+                      MatrixTransform(cube, rotationMatrix);
+
+        Matrix4x4 scalingMatrix =
+            Matrix4x4.TRS(Vector3.zero,
+                            Quaternion.identity,
+                            new Vector3(14, 1, 3));
+       
+
+        Vector3[] imageAfterScaling =
+            MatrixTransform(imageAfterRotation, scalingMatrix);
+
+        return imageAfterScaling;
+
+    }
+
+    private Vector3[] translateCube(Vector3[] cube)
+    {
+
+        Matrix4x4 translationMatrix =
+              Matrix4x4.TRS(new Vector3(-2, -3, 4),
+                              Quaternion.identity,
+                               Vector3.one);
+       
+
+
+        /*Image after Translating*/
+        Vector3[] imageAfterTranslating =
+            MatrixTransform(cube, translationMatrix);
+
+        return imageAfterTranslating;
+
+    }
+
+
+    private Vector3 dirMoving()
     {
         if (trackingTime <= 100)
         {
@@ -841,31 +852,72 @@ public class Matrices : MonoBehaviour {
         dirMoving();
 
 
-        //clearPixels();
+        clearPixels();
         //drawCube(cube);
+
+        //TRS Trying to get texture to rotate
 
         Matrix4x4 translationMatrix =
             Matrix4x4.TRS(new Vector3(-2, -3, 4),
                             Quaternion.identity,
                              Vector3.one);
-        print("Transforming Matrix: " + translationMatrix.ToString());
-        //printMatrix(transformingMatrix);
-
-        Vector3[] imageAfterTranslating =
-           MatrixTransform(cube, translationMatrix);
-
-       
+     
+        
 
         if(trackingTime % 10 == 0)
-        {    
-        drawCube(imageAfterTranslating);
-            rotationcube(imageAfterTranslating);
+        {
+            Vector3[] imageAfterTranslating =
+           MatrixTransform(cube, translationMatrix);
+  
+          drawCube(imageAfterTranslating);
+            translateCube(imageAfterTranslating);
+            cubeTexture.Apply();
+            angle += 1;
+        }
+
+
+        Vector3 startingAxis = new Vector3(14, 3, 3);
+        startingAxis.Normalize();
+        Quaternion rotation = Quaternion.AngleAxis(-27, startingAxis);
+        Matrix4x4 rotationMatrix =
+            Matrix4x4.TRS(new Vector3(0, 0, 0), //Translation Vector
+                           rotation,
+                            Vector3.one);
+       
+
+
+        Vector3[] imageAfterRotation =
+                    MatrixTransform(cube, rotationMatrix);
+
+        if (trackingTime % 10 == 0)
+        {
+            drawCube(imageAfterRotation);
+            rotationcube(imageAfterRotation);
             cubeTexture.Apply();
             angle += 1;
         }
 
 
 
+
+        Matrix4x4 scalingMatrix =
+              Matrix4x4.TRS(Vector3.zero,
+                              Quaternion.identity,
+                              new Vector3(14, 1, 3));
+       
+
+        Vector3[] imageAfterScaling =
+            MatrixTransform(imageAfterRotation, scalingMatrix);
+
+        if (trackingTime % 10 == 0)
+        {
+            drawCube(imageAfterScaling);
+            scalingCube(imageAfterScaling);
+            cubeTexture.Apply();
+            angle += 1;
+        }
+
+  
 
     }
 }
