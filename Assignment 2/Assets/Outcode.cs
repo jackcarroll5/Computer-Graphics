@@ -3,9 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Outcode : MonoBehaviour {
+#pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
+#pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
+public class Outcode : MonoBehaviour
+#pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
+{
+#pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
 
-   public bool up;
+    public bool up;
    public bool down;
    public bool left;
    public bool right;

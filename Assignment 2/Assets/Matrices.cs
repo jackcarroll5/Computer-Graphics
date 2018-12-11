@@ -1,19 +1,58 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Matrices : MonoBehaviour {
 
-    public Vector3 offset = new Vector3(3, 14, 3);
+    Texture2D cubeTexture;
+    Renderer cubeRenderer;
 
-	// Use this for initialization
-	void Start () {
+    private Vector3 dirMovement;
+    public Vector3 offset = new Vector3(3, 14, 3);
+    private int textureWidth = 512;
+   private int textureHeight = 512;
+    private int trackingTime = 0;
+    private int angle = 5;
+    //OutCodeTest test = new OutCodeTest();
+
+
+    List<Vector3> previousPixels;
+
+
+    Vector3[] cube;
+
+    // Use this for initialization
+    void Start () {
+        cube = new Vector3[8];
+
+        previousPixels = new List<Vector3>();
 
         Screen.SetResolution(1920, 1200, true);
 
+        cubeTexture = new Texture2D(textureWidth,textureHeight);
+        cubeRenderer = GetComponent<Renderer>();
+        cubeRenderer.material.mainTexture = cubeTexture;
+       
+
+        for(int x = 0; x < cubeTexture.width; x++)
+        {
+            for(int y = 0; y < cubeTexture.height; y++)
+            {
+                cubeTexture.SetPixel(x, y, Color.red);
+            }        
+        }
+        
+        cubeTexture.Apply();
+
+
+
+       
+
+
         Camera cam = new Camera();
 
-        Vector3[] cube = new Vector3[8];
+      
         cube[0] = new Vector3(1, 1, 1);
         cube[1] = new Vector3(-1, 1, 1);
         cube[2] = new Vector3(-1, -1, 1);
@@ -24,6 +63,10 @@ public class Matrices : MonoBehaviour {
         cube[7] = new Vector3(1, -1, -1);
 
         Vector3[] newImage = cube;
+
+        //drawCube(newImage);
+
+
 
 
         Vector3 startingAxis = new Vector3(14, 3, 3);
@@ -42,15 +85,40 @@ public class Matrices : MonoBehaviour {
                     MatrixTransform(cube, rotationMatrix);
 
 
+
+       // Vector2[] screenImage = convertToScreen(imageAfterRotation, textureWidth, textureHeight);
+
+
+
+      
+
         string rotArray = "";
 
         for(int i = 0; i < imageAfterRotation.Length; i++)
         {
            rotArray += "Image after rotation: " + imageAfterRotation[i] + "\n";
         }
-        print(rotArray);     
+        print(rotArray);
+
+
+
+        string screenRotArray = "";
+
+        /*for (int i = 0; i < screenImage.Length; i++)
+        {
+            screenRotArray += "Screen Image after rotation: " + screenImage[i] + "\n";
+        }
+        print(screenRotArray);*/
         //printVerts(newImage);
 
+
+        foreach (Vector2 pt in imageAfterRotation)
+        {
+            cubeTexture.SetPixel((int)pt.x, (int)pt.y, Color.grey);
+            print(pt.x + "," + pt.y);
+        }
+
+        //drawCube(imageAfterRotation);
 
 
         Matrix4x4 scalingMatrix =
@@ -63,6 +131,9 @@ public class Matrices : MonoBehaviour {
         Vector3[] imageAfterScaling =
             MatrixTransform(imageAfterRotation, scalingMatrix);
 
+
+        //Vector2[] screenImageScale = convertToScreen(imageAfterScaling, textureWidth, textureHeight);
+
         string scalArray = "";
 
         for (int i = 0; i < imageAfterScaling.Length; i++)
@@ -71,11 +142,30 @@ public class Matrices : MonoBehaviour {
         }
 
         print(scalArray);
-       // printVerts(newImage);
+
+       
+
+        string screenScaleArray = "";
+
+        /*for (int i = 0; i < screenImageScale.Length; i++)
+        {
+            screenScaleArray += "Screen Image after Scaling: " + screenImageScale[i] + "\n";
+        }
+        print(screenScaleArray);*/
 
 
-     
-    
+        foreach (Vector2 pt in imageAfterScaling)
+        {
+           
+            cubeTexture.SetPixel((int)pt.x, (int)pt.y, Color.green);
+            print(pt.x + "," + pt.y);
+        }
+
+        cubeTexture.Apply();
+
+        //drawCube(imageAfterScaling);
+
+
         Matrix4x4 translationMatrix =
               Matrix4x4.TRS(new Vector3(-2, -3, 4),
                               Quaternion.identity,
@@ -86,7 +176,26 @@ public class Matrices : MonoBehaviour {
 
         /*Image after Translating*/
         Vector3[] imageAfterTranslating =
-            MatrixTransform(imageAfterScaling, translationMatrix);
+            MatrixTransform(cube, translationMatrix);
+
+
+        drawCube(imageAfterTranslating);
+        cubeTexture.Apply();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       // Vector2[] screenImageTranslate = convertToScreen(imageAfterTranslating, textureWidth, textureHeight);
 
         string tranArray = "";
 
@@ -95,7 +204,27 @@ public class Matrices : MonoBehaviour {
             tranArray += "Image after translating: " + imageAfterTranslating[i].ToString() + "\n";
         }
         print(tranArray);
-       // printVerts(newImage);
+
+
+        foreach (Vector2 pt in imageAfterTranslating)
+        {
+            cubeTexture.SetPixel((int)pt.x, (int)pt.y, Color.yellow);
+            print(pt.x + "," + pt.y);
+        }
+
+        cubeTexture.Apply();
+
+
+        //drawCube(imageAfterTranslating);
+
+
+        string screenTranslateArray = "";
+
+      /*  for (int i = 0; i < screenImageTranslate.Length; i++)
+        {
+            screenTranslateArray += "Screen Image after Translating: " + screenImageTranslate[i] + "\n";
+        }
+        print(screenTranslateArray);*/
 
 
 
@@ -109,13 +238,27 @@ public class Matrices : MonoBehaviour {
         /*Image after Transformations*/
         Vector3[] imageAfterTransformations = MatrixTransform(cube,singleMatrix);
 
-            string imageArray = "";
+        //Vector2[] screenImageTranform = convertToScreen(imageAfterTransformations, textureWidth, textureHeight);
+
+        string imageArray = "";
 
         for(int i = 0; i < imageAfterTransformations.Length; i++)
         {
             imageArray += "Image after transformations: " + imageAfterTransformations[i].ToString() + "\n";
         }
              print(imageArray);
+
+        //drawCube(imageAfterTransformations);
+
+
+
+        string screenTransformArray = "";
+
+        /*for (int i = 0; i < screenImageTranform.Length; i++)
+        {
+            screenTransformArray += "Screen Image after Transforming: " + screenImageTranform[i] + "\n";
+        }
+        print(screenTransformArray);*/
 
 
 
@@ -126,12 +269,11 @@ public class Matrices : MonoBehaviour {
         Vector3 up = new Vector3(4,3,14);
 
         Vector3 forward = (lookAt - camPos).normalized;
+        up.Normalize();
 
        
         //Forward and up
       Quaternion moveScene =  Quaternion.LookRotation(forward,up.normalized);
-
-
         Vector3 translationCam = -camPos;
 
 
@@ -140,8 +282,22 @@ public class Matrices : MonoBehaviour {
 
 
 
+
+
+
+
+
+
+
+
+
+
         /*Image after Viewing Matrix*/
         Vector3[] imageAfterVM = MatrixTransform(imageAfterTransformations, viewingMatrix);
+
+        //Vector2[] screenImageVM = convertToScreen(imageAfterVM, textureWidth, textureHeight);
+
+
 
         string vmImage = "";
 
@@ -149,16 +305,43 @@ public class Matrices : MonoBehaviour {
         {
             vmImage += "Image after Viewing Matrix: " + imageAfterVM[i].ToString() + "\n";
         }
-        print(vmImage);
+        //print(vmImage);
+
+
+
+        string screenVMArray = "";
+
+        /*for (int i = 0; i < screenImageVM.Length; i++)
+        {
+            screenVMArray += "Screen Image after Viewing Matrix: " + screenImageVM[i] + "\n";
+        }
+        print(screenVMArray);*/
+
+
+        //drawCube(imageAfterVM);
+
+
+
+
+
+
+
+
+
+
 
 
         /*Projection Matrix*/
-     Matrix4x4 projectionMatrix = Matrix4x4.Perspective(45, (Screen.width / Screen.height), 1, 1000);
+        Matrix4x4 projectionMatrix = Matrix4x4.Perspective(45, (Screen.width / Screen.height), 1, 1000);
         print("Projection Matrix: " + projectionMatrix.ToString());
 
 
         /*Image after Projection Matrix*/
         Vector3[] lastImage = MatrixTransform(imageAfterVM, projectionMatrix);
+
+
+        //Vector2[] screenImageProjection = convertToScreen(lastImage, textureWidth, textureHeight);
+
 
         string projectionImage = "";
 
@@ -166,7 +349,24 @@ public class Matrices : MonoBehaviour {
         {
             projectionImage += "Image after Projection Matrix: " + lastImage[i].ToString() + "\n";
         }
-        print(projectionImage);
+       // print(projectionImage);
+
+
+
+        string screenProjectArray = "";
+
+       /* for (int i = 0; i < screenImageProjection.Length; i++)
+        {
+            screenProjectArray += "Screen Image after Projection: " + screenImageProjection[i] + "\n";
+        }
+        print(screenProjectArray);*/
+
+
+        //drawCube(lastImage);
+
+
+
+
 
 
 
@@ -180,19 +380,48 @@ public class Matrices : MonoBehaviour {
         /*Image after Single Matrix of Everything*/
         Vector3[] imageEverything = MatrixTransform(cube, singleMatrixEverything);
 
+
+        //Vector2[] screenImageFinal = convertToScreen(imageEverything, textureWidth, textureHeight);
+
         string everyImage = "";
 
         for (int i = 0; i < imageEverything.Length; i++)
         {
             everyImage += "Image after Single Matrix of Everything: " + imageEverything[i].ToString() + "\n";
         }
-        print(everyImage);
+        //print(everyImage);
+
+
+
+        string screenFinalArray = "";
+
+        /*for (int i = 0; i < screenImageFinal.Length; i++)
+        {
+            screenFinalArray += "Screen Image after Single Matrix of Everything: " + screenImageFinal[i] + "\n";
+        }
+        print(screenFinalArray);*/
+
+
+
+        //drawCube(imageEverything);
+
+
+
+
+
+
+
+
+
+
 
 
 
 
         OutCodeTest testRasterisation = new OutCodeTest();
         //List<Vector2> listRaster = testRasterisation.rasteriseBreshenhams(imageEverything[0], imageEverything[1]);
+
+        //Normal
         Vector2 start = new Vector2(3, 2);
         Vector2 end = new Vector2(10, 7);
         print("Start Pt " + start + "\nEnd Pt " + end);
@@ -202,52 +431,88 @@ public class Matrices : MonoBehaviour {
 
         foreach (Vector2 pt in listRaster)
         {
+            cubeTexture.SetPixel((int)pt.x, (int)pt.y, Color.green);
             print(pt.x + "," + pt.y);
         }
 
+       cubeTexture.Apply();
+
+
+
+
+        /*Swap XY if dx < 0*/
         start = new Vector2(3, 7);
         end = new Vector2(15, 30);
         print("Start Pt " + start + "\nEnd Pt " + end);
 
-        listRaster = testRasterisation.rasteriseBreshenhams(start, end);
+        List<Vector2> lRaster = testRasterisation.rasteriseBreshenhams(start, end);
 
-        foreach (Vector2 pt in listRaster)
+        foreach (Vector2 pt in lRaster)
         {
+            cubeTexture.SetPixel((int)pt.x, (int)pt.y, Color.yellow);
             print(pt.x + "," + pt.y);
         }
 
 
+
+
+
+
+
+
+        /*Negation of Y if dy < 0*/
         start = new Vector2(6, 24);
         end =  new Vector2(17, 15);
         print("Start Pt " + start + "\nEnd Pt " + end);
 
-        listRaster = testRasterisation.rasteriseBreshenhams(start, end);
+        List<Vector2> listRast = testRasterisation.rasteriseBreshenhams(start, end);
 
-        foreach (Vector2 pt in listRaster)
+        foreach (Vector2 pt in listRast)
         {
+            cubeTexture.SetPixel((int)pt.x, (int)pt.y, Color.cyan);
             print(pt.x + "," + pt.y);
         }
 
 
+
+
+
+
+
+
+
+
+        /*Swap XY if dy > dx*/
         start = new Vector2(3, 6);
         end = new Vector2(3, 12);
         print("Start Pt " + start + "\nEnd Pt " + end);
 
-        listRaster = testRasterisation.rasteriseBreshenhams(start, end);
+        List<Vector2> listRa = testRasterisation.rasteriseBreshenhams(start, end);
 
-        foreach (Vector2 pt in listRaster)
+        foreach (Vector2 pt in listRa)
         {
+            cubeTexture.SetPixel((int)pt.x, (int)pt.y, Color.magenta);
             print(pt.x + "," + pt.y);
         }
 
+
+
+
+
+
+
+
+
+        /*Combo of dy < 0 (Negate) and Swap values (dy > dx)*/
         start = new Vector2(31, 51);
         end = new Vector2(43, 23);
         print("Start Pt " + start + "\nEnd Pt " + end);
 
-        listRaster = testRasterisation.rasteriseBreshenhams(start, end);
+        List<Vector2> listRas = testRasterisation.rasteriseBreshenhams(start, end);
 
-        foreach (Vector2 pt in listRaster)
+        foreach (Vector2 pt in listRas)
         {
+            cubeTexture.SetPixel((int)pt.x, (int)pt.y, Color.black);
             print(pt.x + "," + pt.y);
         }
 
@@ -261,54 +526,41 @@ public class Matrices : MonoBehaviour {
 
 
 
+        /*Combo of dy < 0 (Negate) and Slope > 1*/
+        start = new Vector2(52, 32);
+        end = new Vector2(60, 20);
+        print("Start Pt " + start + "\nEnd Pt " + end);
 
+        List<Vector2> lstRaster = testRasterisation.rasteriseBreshenhams(start, end);
 
-
-
-
-        /*Projection by hand*/
-        /* Matrix4x4 handProjection = new Matrix4x4(new Vector4(1,0,0,0),
-                                                  new Vector4(0,1,0,0),
-                                                  new Vector4(0, 0, 1, 0),
-                                                  new Vector4(0, 0, -1, 0));
-
-         print("Projection by Hand: " + handProjection.ToString());*/
-
-
-
-        /*Image after Projection by Hand*/
-        /*Vector3[] imageProjectionHand = MatrixTransform(imageAfterVM, handProjection);
-
-        string projectionHandImage = "";
-
-        for (int i = 0; i < imageProjectionHand.Length; i++)
+        foreach (Vector2 pt in lstRaster)
         {
-            projectionHandImage += "Image after Projection by Hand: " + imageProjectionHand[i].ToString() + "\n";
+            cubeTexture.SetPixel((int)pt.x, (int)pt.y, Color.white);
+            print(pt.x + "," + pt.y);
         }
-        print(projectionHandImage);*/
-
-        /*Projection by hand*/
-        /*Matrix4x4 handProjectionV2 = new Matrix4x4(new Vector4(1, 0, 0, 0),
-                                                 new Vector4(0, 1, 0, 0),
-                                                 new Vector4(0, 0, 1, -1),
-                                                 new Vector4(0, 0, 0, 0));
-
-        print("Projection by Hand V2: " + handProjectionV2.ToString());*/
 
 
 
-        /*Image after Projection by Hand*/
-        /*Vector3[] imageProjectionHandV2 = MatrixTransform(imageAfterVM, handProjectionV2);
 
-        string projectionHandImageV2 = "";
 
-        for (int i = 0; i < imageProjectionHandV2.Length; i++)
+        /*All combos*/
+        start = new Vector2(60, 20);
+        end = new Vector2(52, 32);
+        print("Start Pt " + start + "\nEnd Pt " + end);
+
+        List<Vector2> listR = testRasterisation.rasteriseBreshenhams(start, end);
+
+        foreach (Vector2 pt in listR)
         {
-            projectionHandImageV2 += "Image after Projection by Hand: " + imageProjectionHandV2[i].ToString() + "\n";
+            cubeTexture.SetPixel((int)pt.x, (int)pt.y, Color.grey);
+            print(pt.x + "," + pt.y);
         }
-        print(projectionHandImageV2);*/
+
+
 
     }
+
+  
 
     private void printVerts(Vector3[] newImage)
     {
@@ -319,11 +571,186 @@ public class Matrices : MonoBehaviour {
 
     }
 
+    public void drawCube(Vector3[] cubeImage)
+    {
+        lineDraw(cubeImage[0], cubeImage[1]);
+        lineDraw(cubeImage[1], cubeImage[2]);
+        lineDraw(cubeImage[2], cubeImage[3]);
+        lineDraw(cubeImage[3], cubeImage[0]);
+
+        lineDraw(cubeImage[4], cubeImage[5]);
+        lineDraw(cubeImage[5], cubeImage[6]);
+        lineDraw(cubeImage[6], cubeImage[7]);
+        lineDraw(cubeImage[7], cubeImage[4]);
+
+       
+        lineDraw(cubeImage[0], cubeImage[4]);
+        lineDraw(cubeImage[7], cubeImage[3]);
+        lineDraw(cubeImage[0], cubeImage[4]);
+        lineDraw(cubeImage[7], cubeImage[3]);
+
+        lineDraw(cubeImage[7], cubeImage[3]);
+        lineDraw(cubeImage[2], cubeImage[6]);
+        lineDraw(cubeImage[0], cubeImage[4]);
+        lineDraw(cubeImage[7], cubeImage[3]);
+
+    }
+
+
+
+    private void lineDraw(Vector3 start, Vector3 end)
+    {
+        Vector2 startLine = new Vector2(start.x / start.z, start.y / start.z);
+        Vector2 endLine = new Vector2(end.x / end.z, end.y / end.z);
+
+        
+
+        if (LineClip(ref startLine, ref endLine))
+        {
+            startLine = new Vector2(resolutionX(startLine.x,textureWidth),resolutionY(startLine.y,textureHeight));
+            endLine = new Vector2(resolutionX(endLine.x, textureWidth), resolutionY(endLine.y, textureHeight));
+
+
+            //convertToScreen(startLine, endLine, textureWidth, textureHeight);
+
+
+
+
+
+            OutCodeTest testRasterisation = new OutCodeTest();
+
+           // Vector2 startConvert = convertToScreen(startLine,textureWidth,textureHeight);
+
+
+
+            List<Vector2> listRaster = testRasterisation.rasteriseBreshenhams(startLine, endLine);
+
+
+            foreach (Vector2 pt in listRaster)
+            {
+
+                cubeTexture.SetPixel((int)pt.x, (int)pt.y, Color.blue);
+                previousPixels.Add(pt);
+            }
+            cubeTexture.Apply();
+
+        }
+    }
+
+    private void clearPixels()
+    {
+
+        foreach(Vector2 pixel in previousPixels)
+        {
+            cubeTexture.SetPixel((int)pixel.x, (int)pixel.y, cubeRenderer.material.color);
+           
+        }
+
+        previousPixels.Clear();
+       
+    }
+
+    public bool LineClip(ref Vector2 startPoint, ref Vector2 endPoint)
+    {
+        Outcode startOutcode = new Outcode(startPoint); //x = Start
+        Outcode endOutcode = new Outcode(endPoint); //y = End
+
+        if ((startOutcode == new Outcode()) && (endOutcode == new Outcode()))
+        {
+            print("Trivially Accept");
+            return true; //Trivial Acceptance         
+        }
+
+        if (((startOutcode & endOutcode) != new Outcode()))
+        {
+            print("Trivially Reject");
+            return false; //Trivial Rejection
+        }
+
+        // Work to do
+
+        // Clip start Point
+        if (startOutcode.up)
+        {
+            startPoint = LineIntercept(startPoint, endPoint, 0);
+
+            return LineClip(ref startPoint, ref endPoint);
+
+        }
+
+        else if (startOutcode.down)
+        {
+            startPoint = LineIntercept(startPoint, endPoint, 1);
+
+            return LineClip(ref startPoint, ref endPoint);
+
+        }
+
+        else if (startOutcode.left)
+        {
+            startPoint = LineIntercept(startPoint, endPoint, 2);
+
+            return LineClip(ref startPoint, ref endPoint);
+        }
+
+        else if (startOutcode.right)
+        {
+            startPoint = LineIntercept(startPoint, endPoint, 3); //Right
+            return LineClip(ref startPoint, ref endPoint);
+        }
+
+        return LineClip(ref endPoint, ref startPoint);
+
+    }
+
+    private float Slope(Vector2 xPoint, Vector2 yPoint)
+    {
+        return ((yPoint.y - xPoint.y) / (yPoint.x - xPoint.x));
+    }
+
+
+    private Vector2 LineIntercept(Vector2 startPoint, Vector2 endPoint, int v)
+    {
+        float slope = Slope(startPoint, endPoint);
+
+        switch (v)
+        {
+            case 0:  //Top Edge  y = 1
+                return new Vector2(startPoint.x + (1 / slope) * (1 - startPoint.y), 1);
+
+            case 1:  //Bottom Edge  y = -1
+                return new Vector2(startPoint.x + (1 / slope) * (-1 - startPoint.y), -1);
+
+            case 2:  //Left Edge  x= -1
+                return new Vector2(-1, startPoint.y + slope * (-1 - startPoint.x));
+
+            default:  //Right Edge  x= 1
+                return new Vector2(1, startPoint.y + slope * (1 - startPoint.x));
+
+        }
+    }
+
+    private Vector2[] cubeDivision(Vector3[] cubedIn)
+    {
+
+        throw new NotImplementedException();
+    }
+
+    int resolutionX(float x, int xResolution)
+    {
+        return (int)((x + 1) * (xResolution - 1) / 2.0f);
+    }
+    int resolutionY(float y, int yResolution)
+    {
+        return (int)((1 - y) * (yResolution - 1) / 2.0f);
+    }
+
     private Vector3[] MatrixTransform(
         Vector3[] meshVertices,
         Matrix4x4 transformMatrix)
     {
         Vector3[] output = new Vector3[meshVertices.Length];
+
         for (int i = 0; i < meshVertices.Length; i++)
             output[i] = transformMatrix *
                 new Vector4(
@@ -342,9 +769,103 @@ public class Matrices : MonoBehaviour {
             print(matrix.GetRow(i).ToString());
     }
 
+    private Vector3[] rotationcube(Vector3[] cube)
+    {
+        Vector3 startingAxis = new Vector3(14, 3, 3);
+        startingAxis.Normalize();
+        Quaternion rotation = Quaternion.AngleAxis(-27, startingAxis);
+
+        Matrix4x4 rotationMatrix =
+            Matrix4x4.TRS(new Vector3(0, 0, 0), //Translation Vector
+                           rotation,
+                            Vector3.one);
+        print("Rotation Matrix: " + rotationMatrix.ToString());
+        // printMatrix(rotationMatrix);
+
+
+        Vector3[] imageAfterRotation =
+                    MatrixTransform(cube, rotationMatrix);
+
+        return imageAfterRotation;
+    }
+
+  private Vector3 dirMoving()
+    {
+        if (trackingTime <= 100)
+        {
+            dirMovement = new Vector3(-0.05f, -0.05f, 0);
+        }
+        else if (trackingTime <= 200)
+        {
+            dirMovement = new Vector3(0, 0.05f, 0);
+        }
+        else if (trackingTime <= 300)
+        {
+            dirMovement = new Vector3(0.05f, -0.05f, 0);
+        }
+        else if (trackingTime <= 400)
+        {
+            dirMovement = new Vector3(0.05f, 0, 0);
+        }
+        else if (trackingTime <= 500)
+        {
+            dirMovement = new Vector3(-0.5f, 0.05f, 0);
+        }
+        else if (trackingTime <= 600)
+        {
+            dirMovement = new Vector3(0, -0.5f, 0);
+        }
+        else if (trackingTime <= 700)
+        {
+            dirMovement = new Vector3(-0.5f, 0.05f, 0);
+        }
+        else if (trackingTime <= 800)
+        {
+            dirMovement = new Vector3(-0.5f, 0, 0);
+        }
+        else
+        {
+            trackingTime = 0;
+        }
+
+        return dirMovement;
+
+    }
+
 
     // Update is called once per frame
     void Update () {
-		
-	}
+
+
+
+        dirMoving();
+
+
+        //clearPixels();
+        //drawCube(cube);
+
+        Matrix4x4 translationMatrix =
+            Matrix4x4.TRS(new Vector3(-2, -3, 4),
+                            Quaternion.identity,
+                             Vector3.one);
+        print("Transforming Matrix: " + translationMatrix.ToString());
+        //printMatrix(transformingMatrix);
+
+        Vector3[] imageAfterTranslating =
+           MatrixTransform(cube, translationMatrix);
+
+       
+
+        if(trackingTime % 10 == 0)
+        {    
+        drawCube(imageAfterTranslating);
+            rotationcube(imageAfterTranslating);
+            cubeTexture.Apply();
+            angle += 1;
+        }
+
+
+
+
+    }
 }

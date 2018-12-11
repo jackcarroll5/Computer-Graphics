@@ -5,6 +5,7 @@ using UnityEngine;
 public class OutCodeTest : MonoBehaviour {
 
     Vector2 start, end;
+    Matrices line = new Matrices();
 
     public OutCodeTest(Vector2 begin, Vector2 finish)
     {
@@ -28,7 +29,7 @@ public class OutCodeTest : MonoBehaviour {
         print("End Pt" + end.ToString());
 
        
-        LineClip(ref start, ref end);//Expected = Trivial Acceptance
+       line.LineClip(ref start, ref end);//Expected = Trivial Acceptance
         print("Start Pt" + start.ToString());
         print("End Pt" + end.ToString());
 
@@ -43,7 +44,7 @@ public class OutCodeTest : MonoBehaviour {
         print("Start Pt" + startR.ToString());
         print("End Pt" + endR.ToString());
 
-        LineClip(ref startR, ref endR);//Expected = Trivial Rejection
+        line.LineClip(ref startR, ref endR);//Expected = Trivial Rejection
         print("Start Pt" + startR.ToString());
         print("End Pt" + endR.ToString());
 
@@ -58,7 +59,7 @@ public class OutCodeTest : MonoBehaviour {
         print("Start Pt" + startC.ToString());
         print("End Pt" + endC.ToString());
 
-        LineClip(ref startC, ref endC);//Reject
+        line.LineClip(ref startC, ref endC);//Reject
         print("Start Pt" + startC.ToString());
         print("End Pt" + endC.ToString());
 
@@ -71,7 +72,7 @@ public class OutCodeTest : MonoBehaviour {
         print("Start Pt" + s.ToString());
         print("End Pt" + e.ToString());
 
-        LineClip(ref s, ref e);//Main Clip
+        line.LineClip(ref s, ref e);//Main Clip
         print("Start Pt" + s.ToString());
         print("End Pt" + e.ToString());
 
@@ -83,7 +84,7 @@ public class OutCodeTest : MonoBehaviour {
         print("Start Pt" + st.ToString());
         print("End Pt" + en.ToString());
 
-        LineClip(ref st, ref en);//Main Clip
+        line.LineClip(ref st, ref en);//Main Clip
         print("Start Pt" + st.ToString());
         print("End Pt" + en.ToString());
 
@@ -150,6 +151,52 @@ public class OutCodeTest : MonoBehaviour {
     }
 
 
+    //public List<Vector2> rasteriseBresh(int x1, int y1, int x2, int y2)
+    //{
+    //    int dx = x2 - x1;
+    //    int dy = y2 - y1;
+
+    //    if(dx < 0)
+    //    {
+    //        return rasteriseBresh(end, start);
+    //    }
+    //    if (dy < 0)
+    //    {
+    //      return negateY(rasteriseBresh(negateY(start), negateY(end)));
+    //    }
+    //    if (dy > dx)
+    //    {
+    //       return swapXY(rasteriseBresh(swapXY(start), swapXY(end)));
+    //    }
+
+
+    //    List<Vector2> output = new List<Vector2>();  
+    //    output.Add(start);   
+        
+    //    float p = 2 * dy - dx;
+    //    int y = (int)start.y;
+    //    int dy2 = (2 * dy);
+    //    int dyMinusdx2 = (2 * (dy - dx));
+
+
+    //    for (int j = (int)start.x + 1; j <= end.x; j++)
+    //    {
+    //        if (p < 0)
+    //        {
+    //            p = p + dy2;
+    //        }
+    //        else
+    //        {
+    //            y++;
+    //            p = p + dyMinusdx2;
+    //        }
+    //        output.Add(new Vector2(j, y));
+
+    //    }
+    //    return output;
+    //}
+
+
 
     Vector2 negateY(Vector2 pt)
     {
@@ -191,84 +238,10 @@ public class OutCodeTest : MonoBehaviour {
         return outputList;
     }
 
-    public bool LineClip(ref Vector2 startPoint, ref Vector2 endPoint)
-    {
-        Outcode startOutcode = new Outcode(startPoint); //x = Start
-        Outcode endOutcode = new Outcode(endPoint); //y = End
+   
 
-        if ((startOutcode == new Outcode()) && (endOutcode == new Outcode()))
-        {
-            print("Trivially Accept");
-            return true; //Trivial Acceptance         
-        }
-
-        if (((startOutcode & endOutcode) != new Outcode()))
-        {
-            print("Trivially Reject");
-            return false; //Trivial Rejection
-        }
-
-        // Work to do
-
-        // Clip start Point
-        if (startOutcode.up)
-        {
-            startPoint = LineIntercept(startPoint, endPoint, 0);
-
-            return LineClip(ref startPoint, ref endPoint);
-
-        }
-
-       else if (startOutcode.down)
-        {
-            startPoint = LineIntercept(startPoint, endPoint, 1);
-
-            return LineClip(ref startPoint, ref endPoint);
-
-        }
-
-       else if (startOutcode.left)
-        {
-            startPoint = LineIntercept(startPoint, endPoint, 2);
-
-            return LineClip(ref startPoint, ref endPoint);
-        }
-
-       else if (startOutcode.right)
-        {
-            startPoint = LineIntercept(startPoint, endPoint, 3); //Right
-            return LineClip(ref startPoint, ref endPoint);
-        }
-
-        return LineClip(ref endPoint, ref startPoint);
-
-    }
-
-    private Vector2 LineIntercept(Vector2 startPoint, Vector2 endPoint, int v)
-    {
-        float slope = Slope(startPoint, endPoint);
-
-        switch (v)
-        {
-            case 0:  //Top Edge  y = 1
-                return new Vector2(startPoint.x + (1 / slope) * (1 - startPoint.y), 1);
-
-            case 1:  //Bottom Edge  y = -1
-                return new Vector2(startPoint.x + (1 / slope) * (-1 - startPoint.y), -1);
-
-            case 2:  //Left Edge  x= -1
-                return new Vector2(-1, startPoint.y + slope * (-1 - startPoint.x));
-
-            default:  //Right Edge  x= 1
-                return new Vector2(1, startPoint.y + slope * (1 - startPoint.x));
-
-        }
-    }
+   
 
 
-    private float Slope(Vector2 xPoint, Vector2 yPoint)
-    {
-        return ((yPoint.y - xPoint.y) / (yPoint.x - xPoint.x));
-    }
-
+    
 }
