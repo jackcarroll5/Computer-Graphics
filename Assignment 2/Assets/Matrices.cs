@@ -18,10 +18,10 @@ public class Matrices : MonoBehaviour {
     //OutCodeTest test = new OutCodeTest();
 
 
-    List<Vector3> previousPixels;
+   public List<Vector3> previousPixels;
 
 
-    Vector3[] cube;
+   public Vector3[] cube;
 
     // Use this for initialization
     void Start () {
@@ -65,11 +65,13 @@ public class Matrices : MonoBehaviour {
 
         Vector3[] newImage = cube;
 
-        //drawCube(newImage);
+        /*Testing out the texture drawing of the cube model which is displayed
+         in a white colour*/
+        drawCube(newImage);
+        cubeTexture.Apply();
 
 
-
-
+/*Testing the results for the points after rotation which includes the matrix for rotation*/
         Vector3 startingAxis = new Vector3(14, 3, 3);
         startingAxis.Normalize();
         Quaternion rotation = Quaternion.AngleAxis(-27, startingAxis);
@@ -119,10 +121,16 @@ public class Matrices : MonoBehaviour {
             print(pt.x + "," + pt.y);
         }
 
-        drawCube(imageAfterRotation);
-        cubeTexture.Apply();
+
+        /*Code below used for testing drawing of texture of cube after rotation at beginning when starting the test before update method. Test Successful before 
+         it was commented out*/
+        /*drawCube(imageAfterRotation);
+        cubeTexture.Apply();*/
 
 
+
+
+        /*Testing the results for the points after scaling which includes the matrix for rotation*/
         Matrix4x4 scalingMatrix =
               Matrix4x4.TRS(Vector3.zero,
                               Quaternion.identity,
@@ -163,10 +171,15 @@ public class Matrices : MonoBehaviour {
             print(pt.x + "," + pt.y);
         }
 
-        drawCube(imageAfterScaling);
-        cubeTexture.Apply();
+
+        /*Code below used for testing drawing of texture of cube after scaling at beginning when starting the test before update method. Test Successful before 
+         it was commented out*/
+        /*drawCube(imageAfterScaling);
+        cubeTexture.Apply();*/
 
 
+
+        /*Testing the results for the points after translation which includes the matrix for rotation*/
         Matrix4x4 translationMatrix =
               Matrix4x4.TRS(new Vector3(-2, -3, 4),
                               Quaternion.identity,
@@ -180,8 +193,10 @@ public class Matrices : MonoBehaviour {
             MatrixTransform(cube, translationMatrix);
 
 
-        drawCube(imageAfterTranslating);
-        cubeTexture.Apply();
+        /*Code below used for testing drawing of texture of cube after translation at beginning when starting the test before update method. Test Successful before 
+         it was commented out*/
+        /*drawCube(imageAfterTranslating);
+        cubeTexture.Apply();*/
 
 
 
@@ -414,9 +429,7 @@ public class Matrices : MonoBehaviour {
 
 
 
-
-
-
+        /*Implementing rasterisation with various constraints and rules*/
 
         /*Swap XY if dx < 0*/
         start = new Vector2(3, 7);
@@ -610,15 +623,12 @@ public class Matrices : MonoBehaviour {
 
     private void clearPixels()
     {
-
         foreach(Vector2 pixel in previousPixels)
         {
             cubeTexture.SetPixel((int)pixel.x, (int)pixel.y, cubeRenderer.material.color);
            
         }
-
-        previousPixels.Clear();
-       
+        previousPixels.Clear();     
     }
 
     public bool LineClip(ref Vector2 startPoint, ref Vector2 endPoint)
@@ -734,33 +744,39 @@ public class Matrices : MonoBehaviour {
             print(matrix.GetRow(i).ToString());
     }
 
+
+    /*Smaller cube texture than cube for scaling texture but bigger than translation cube
+     * within Cube marked in blue. Rotation occurs here around rotation matrix*/
     private Vector3[] rotationcube(Vector3[] cube)
     {
         Vector3 startingAxis = new Vector3(14, 3, 3);
         startingAxis.Normalize();
-        Quaternion rotation = Quaternion.AngleAxis(-27, startingAxis);
+        Quaternion rotation = Quaternion.AngleAxis(-60, startingAxis);
 
         Matrix4x4 rotationMatrix =
-            Matrix4x4.TRS(new Vector3(0, 0, 0), //Translation Vector
+            Matrix4x4.TRS(new Vector3(0, 0, 3), //Translation Vector
                            rotation,
                             Vector3.one);
-        
-
+       
 
         Vector3[] imageAfterRotation =
                     MatrixTransform(cube, rotationMatrix);
 
+        drawCube(imageAfterRotation);
+
         return imageAfterRotation;
     }
 
+
+    /*Biggest cube texture within Cube marked in blue*/
     private Vector3[] scalingCube(Vector3[] cube)
     {
         Vector3 startingAxis = new Vector3(14, 3, 3);
         startingAxis.Normalize();
-        Quaternion rotation = Quaternion.AngleAxis(-27, startingAxis);
+        Quaternion rotation = Quaternion.AngleAxis(-60, startingAxis);
 
         Matrix4x4 rotationMatrix =
-            Matrix4x4.TRS(new Vector3(0, 0, 0), //Translation Vector
+            Matrix4x4.TRS(new Vector3(0, 0, 3), //Translation Vector
                            rotation,
                             Vector3.one);
 
@@ -771,21 +787,25 @@ public class Matrices : MonoBehaviour {
         Matrix4x4 scalingMatrix =
             Matrix4x4.TRS(Vector3.zero,
                             Quaternion.identity,
-                            new Vector3(14, 1, 3));
+                            new Vector3(6, 4, 4));
        
 
         Vector3[] imageAfterScaling =
             MatrixTransform(imageAfterRotation, scalingMatrix);
 
+        drawCube(imageAfterScaling);
+
         return imageAfterScaling;
 
     }
 
+
+    /*Smallest cube texture within Cube marked in blue*/
     private Vector3[] translateCube(Vector3[] cube)
     {
 
         Matrix4x4 translationMatrix =
-              Matrix4x4.TRS(new Vector3(-2, -3, 4),
+              Matrix4x4.TRS(new Vector3(0, 0, 3),
                               Quaternion.identity,
                                Vector3.one);
        
@@ -794,6 +814,8 @@ public class Matrices : MonoBehaviour {
         /*Image after Translating*/
         Vector3[] imageAfterTranslating =
             MatrixTransform(cube, translationMatrix);
+
+        drawCube(imageAfterTranslating);
 
         return imageAfterTranslating;
 
@@ -847,72 +869,33 @@ public class Matrices : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-
-
         dirMoving();
-
 
         clearPixels();
         //drawCube(cube);
 
         //TRS Trying to get texture to rotate
 
-        Matrix4x4 translationMatrix =
-            Matrix4x4.TRS(new Vector3(-2, -3, 4),
-                            Quaternion.identity,
-                             Vector3.one);
-     
-        
-
+        /*Based on initial points from first assignment to test out cube textures drawn within cube after translation,rotation and scaling*/      
         if(trackingTime % 10 == 0)
+        {         
+         
+            translateCube(cube);
+            cubeTexture.Apply();
+            angle += 1;
+        }
+     
+
+        if (trackingTime % 20 == 0)
         {
-            Vector3[] imageAfterTranslating =
-           MatrixTransform(cube, translationMatrix);
-  
-          drawCube(imageAfterTranslating);
-            translateCube(imageAfterTranslating);
+            rotationcube(cube);
             cubeTexture.Apply();
             angle += 1;
         }
 
-
-        Vector3 startingAxis = new Vector3(14, 3, 3);
-        startingAxis.Normalize();
-        Quaternion rotation = Quaternion.AngleAxis(-27, startingAxis);
-        Matrix4x4 rotationMatrix =
-            Matrix4x4.TRS(new Vector3(0, 0, 0), //Translation Vector
-                           rotation,
-                            Vector3.one);
-       
-
-
-        Vector3[] imageAfterRotation =
-                    MatrixTransform(cube, rotationMatrix);
-
-        if (trackingTime % 10 == 0)
-        {
-            drawCube(imageAfterRotation);
-            rotationcube(imageAfterRotation);
-            cubeTexture.Apply();
-            angle += 1;
-        }
-
-
-
-
-        Matrix4x4 scalingMatrix =
-              Matrix4x4.TRS(Vector3.zero,
-                              Quaternion.identity,
-                              new Vector3(14, 1, 3));
-       
-
-        Vector3[] imageAfterScaling =
-            MatrixTransform(imageAfterRotation, scalingMatrix);
-
-        if (trackingTime % 10 == 0)
-        {
-            drawCube(imageAfterScaling);
-            scalingCube(imageAfterScaling);
+        if (trackingTime % 30 == 0)
+        {        
+            scalingCube(cube);
             cubeTexture.Apply();
             angle += 1;
         }
