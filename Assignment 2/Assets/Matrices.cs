@@ -5,15 +5,17 @@ using UnityEngine;
 
 public class Matrices : MonoBehaviour {
 
-    Texture2D cubeTexture;
+   public static Texture2D cubeTexture;
     Renderer cubeRenderer;
 
+    private float rotationTexture = 10f;
     private Vector3 dirMovement;
     public Vector3 offset = new Vector3(3, 14, 3);
     private int textureWidth = 512;
    private int textureHeight = 512;
     private int trackingTime = 0;
     private int angle = 5;
+    public Vector2 pivotRotation = new Vector2(1.0f,1.0f);
    
     //OutCodeTest test = new OutCodeTest();
 
@@ -613,12 +615,29 @@ public class Matrices : MonoBehaviour {
             foreach (Vector2 pt in listRaster)
             {
 
-                cubeTexture.SetPixel((int)pt.x, (int)pt.y, Color.blue);
+                cubeTexture.SetPixel((int)pt.x, (int)pt.y, Color.blue);             
                 previousPixels.Add(pt);
             }
             cubeTexture.Apply();
 
         }
+    }
+
+    public static Texture2D rotateTexture(Texture2D textureCube)
+    {
+        Texture2D newTexture = cubeTexture;
+
+        for(int i = 0; i < textureCube.width; i++)
+        {
+            for (int j = 0; j < textureCube.height; j++)
+            {
+                newTexture.SetPixel(i, j, textureCube.GetPixel(textureCube.width - i, j));
+            }
+        }
+
+
+        newTexture.Apply();
+        return newTexture;
     }
 
     private void clearPixels()
@@ -757,6 +776,7 @@ public class Matrices : MonoBehaviour {
             Matrix4x4.TRS(new Vector3(0, 0, 3), //Translation Vector
                            rotation,
                             Vector3.one);
+
        
 
         Vector3[] imageAfterRotation =
@@ -787,7 +807,7 @@ public class Matrices : MonoBehaviour {
         Matrix4x4 scalingMatrix =
             Matrix4x4.TRS(Vector3.zero,
                             Quaternion.identity,
-                            new Vector3(6, 4, 4));
+                            new Vector3(6, 4, 3));
        
 
         Vector3[] imageAfterScaling =
@@ -869,7 +889,17 @@ public class Matrices : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-        dirMoving();
+
+        /*Attempt to rotate and move the cube textures in real time*/
+        Matrix4x4 t = Matrix4x4.TRS(-pivotRotation, Quaternion.identity, Vector3.one);
+
+        float time = Time.time * rotationTexture;
+        Quaternion rotation = Quaternion.Euler(0, 0, time);
+        Matrix4x4 r = Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one);
+        Matrix4x4 tInv = Matrix4x4.TRS(pivotRotation, Quaternion.identity, Vector3.one);
+        cubeRenderer.material.SetMatrix("_Rotation", tInv * r * t);
+
+ 
 
         clearPixels();
         //drawCube(cube);
@@ -881,6 +911,7 @@ public class Matrices : MonoBehaviour {
         {         
          
             translateCube(cube);
+            rotateTexture(cubeTexture);
             cubeTexture.Apply();
             angle += 1;
         }
@@ -889,6 +920,7 @@ public class Matrices : MonoBehaviour {
         if (trackingTime % 20 == 0)
         {
             rotationcube(cube);
+            rotateTexture(cubeTexture);
             cubeTexture.Apply();
             angle += 1;
         }
@@ -896,6 +928,7 @@ public class Matrices : MonoBehaviour {
         if (trackingTime % 30 == 0)
         {        
             scalingCube(cube);
+            rotateTexture(cubeTexture);
             cubeTexture.Apply();
             angle += 1;
         }
