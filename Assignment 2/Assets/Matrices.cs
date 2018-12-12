@@ -214,6 +214,7 @@ public class Matrices : MonoBehaviour {
         print(tranArray);
 
 
+/*Setting pixels for the points in the image after translating */
         foreach (Vector2 pt in imageAfterTranslating)
         {
             cubeTexture.SetPixel((int)pt.x, (int)pt.y, Color.yellow);
@@ -407,6 +408,7 @@ public class Matrices : MonoBehaviour {
 
 
 
+      /*Beginning the implementation of Rasterisation*/
         OutCodeTest testRasterisation = new OutCodeTest();
         //List<Vector2> listRaster = testRasterisation.rasteriseBreshenhams(imageEverything[0], imageEverything[1]);
 
@@ -623,6 +625,7 @@ public class Matrices : MonoBehaviour {
         }
     }
 
+/*The attempt to allow rotation of the texture which should move in real time*/
     public static Texture2D rotateTexture(Texture2D textureCube)
     {
         Texture2D newTexture = cubeTexture;
@@ -640,6 +643,7 @@ public class Matrices : MonoBehaviour {
         return newTexture;
     }
 
+/*The clearance of pixels that must be taken away which are separate to the rasterisation list*/
     private void clearPixels()
     {
         foreach(Vector2 pixel in previousPixels)
@@ -650,6 +654,7 @@ public class Matrices : MonoBehaviour {
         previousPixels.Clear();     
     }
 
+/*Line clipping method which uses Outcodes to determine trivial acceptance or rejection where the line is clipped depending on the UDLR clause (Which is within viewport)*/
     public bool LineClip(ref Vector2 startPoint, ref Vector2 endPoint)
     {
         Outcode startOutcode = new Outcode(startPoint); //x = Start
@@ -708,7 +713,7 @@ public class Matrices : MonoBehaviour {
         return ((yPoint.y - xPoint.y) / (yPoint.x - xPoint.x));
     }
 
-
+//Interception of line to determine where line clips to from start to finish of line
     private Vector2 LineIntercept(Vector2 startPoint, Vector2 endPoint, int v)
     {
         float slope = Slope(startPoint, endPoint);
@@ -841,7 +846,7 @@ public class Matrices : MonoBehaviour {
 
     }
 
-
+/*Attempt to see where the texture moves after a certain number of seconds*/
     private Vector3 dirMoving()
     {
         if (trackingTime <= 100)
