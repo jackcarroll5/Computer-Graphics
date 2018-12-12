@@ -21,6 +21,8 @@ public class OutCodeTest : MonoBehaviour {
    
 
     // Use this for initialization
+
+/*Testing of outcodes to see if trivial rejection or acceptance occurs according to start and end points*/
     void Start () {
         print("Test 1");
         start = new Vector2(-0.5f,-0.5f);
@@ -29,6 +31,7 @@ public class OutCodeTest : MonoBehaviour {
         print("End Pt" + end.ToString());
 
        
+/*Implements line clipping to discover results of outcode trivial acceptance or rejection*/
        line.LineClip(ref start, ref end);//Expected = Trivial Acceptance
         print("Start Pt" + start.ToString());
         print("End Pt" + end.ToString());
@@ -105,6 +108,8 @@ public class OutCodeTest : MonoBehaviour {
 	
 	}
 
+
+/*Rasterisation Algortihm - Breshenhams*/
    public List<Vector2> rasteriseBreshenhams(Vector2 start, Vector2 end)
     {
         int dx = (int)(end.x - start.x);
@@ -197,12 +202,13 @@ public class OutCodeTest : MonoBehaviour {
     //}
 
 
-
+//Negating Y in rasterisation
     Vector2 negateY(Vector2 pt)
     {
         return new Vector2(pt.x, -pt.y);
     }
 
+//List of points that have a negation of Y in rasterisation
     List<Vector2> negateY(List <Vector2> pts)
     {
         List<Vector2> outputList = new List<Vector2>();
@@ -214,6 +220,7 @@ public class OutCodeTest : MonoBehaviour {
         return outputList;
     }
 
+//Swap XY in rasterisation
     Vector2 swapXY(Vector2 pt)
     {
         float refPt = pt.x;
@@ -227,6 +234,7 @@ public class OutCodeTest : MonoBehaviour {
         return new Vector2(pt.y, pt.x);
     }
 
+//List of points that involve swapping X and Y in rasterisation
     List<Vector2> swapXY(List <Vector2> pts)
     {
         List<Vector2> outputList = new List<Vector2>();
